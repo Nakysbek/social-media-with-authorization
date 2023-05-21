@@ -1,7 +1,7 @@
 import axios from "axios";
-import {SearchParamsType, SearchReducerStateType} from "../redux/search-reducer";
+import {SearchParamsStateType} from "../redux/search-reducer";
 
-const $api = axios.create({
+export const $api = axios.create({
     baseURL: "https://cards-nya-back-production.up.railway.app/2.0",
     headers: {
         "Content-Type": "application/json"
@@ -24,14 +24,13 @@ export class AuthService {
 
 }
 
-
 export class PacksService {
-    static async getTable(params?: SearchParamsType) {
+    static async getTable(params?: SearchParamsStateType) {
         if (params) {
             const keys = Object.keys(params)
             let searchParams = ""
             keys.forEach((k) => {
-                const value = params[k as keyof SearchParamsType]
+                const value = params[k as keyof SearchParamsStateType]
                 if (value) {
                     searchParams += k + "=" + value + "&"
                 }
@@ -55,7 +54,6 @@ export class PacksService {
     }
 }
 
-
 export class CardService {
     static async getCard(cardsPackId?: string) {
         return await $api.get(`cards/card?cardsPack_id=${cardsPackId}`)
@@ -71,6 +69,12 @@ export class CardService {
 
     static async changeCard(cardId: string, question: string, answer: string) {
         return await $api.put('cards/card', {card: {_id: cardId, question: question, answer: answer}})
+    }
+}
+
+export class SearchPacksService {
+    static async getSearchedPacks(name: string) {
+        return await $api.get(`cards/pack/?packName=${name}`)
     }
 }
 

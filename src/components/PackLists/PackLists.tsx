@@ -4,14 +4,14 @@ import {AppRootStateType} from "../../redux/store";
 import {authMeTC, AuthStateType} from "../../redux/auth-reducer";
 import s from './PackLists.module.css'
 import {Header} from "../Header/Header";
-import {Cards} from "./Cards/Cards";
 import {getTableTC} from "../../redux/table-reducer";
 import {useNavigate} from "react-router-dom";
-import {SearchParamsType} from "../../redux/search-reducer";
+import {SearchParamsStateType} from "../../redux/search-reducer";
+import {Cards} from "./Cards/Cards";
 
 export const PackLists = () => {
     const {isAuth} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
-    const searchParams = useSelector<AppRootStateType, SearchParamsType>(state => state.searchReducer)
+    const searchParams = useSelector<AppRootStateType, SearchParamsStateType>(state => state.searchReducer)
     const navigate = useNavigate()
     const dispatch = useDispatch<any>()
 

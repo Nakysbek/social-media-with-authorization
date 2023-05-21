@@ -1,0 +1,7 @@
+.profile {
+    width: 1008px;
+    height: 615px;
+    background: #FEFEFF;
+    border-radius: 8px;
+    display: flex;
+}

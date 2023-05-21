@@ -8,12 +8,26 @@
     justify-content: center;
 }
 
-.header h3 {
+.header a {
+    Width: 173px;
+    Height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+}
+
+.header a:hover {
     Width: 173px;
     Height: 60px;
     background: #DCCCDB;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 400;
+    text-decoration: none;
+}
+
+.active {
+
 }

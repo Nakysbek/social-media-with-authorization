@@ -1,50 +1,75 @@
-import React, {useEffect, useState} from 'react';
-import {$api} from "../../api/api";
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../redux/store";
+import {SearchParamsStateType, setPageCountNumberAC, setPageNumberAC} from "../../redux/search-reducer";
+import s from './Pagination.module.css'
 import {TableStateType} from "../../redux/table-reducer";
-import {SearchParamsStateType, setPageNumber} from "../../redux/search-reducer";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+import {Selector} from "../Selector/Selector";
 
 
-export const Page = () => {
+export const Pagination = () => {
+
     const dispatch = useDispatch<any>()
+
     const {cardPacksTotalCount} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
     const {page, pageCount} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.searchReducer)
-    // const [page, setPage] = useState(1)
-    const [packs, setPacks] = useState([])
 
-    useEffect(() => {
-        $api.get(`/cards/pack/?page=${page}&pageCount=${6}`).then(res => {
-            console.log('res.data: ', res.data);
-            setPacks(res.data)
-        })
-    }, [])
-
-    if (isLoading) return <p>Loading Users...</p>
-
-    if (isError) return <p>Error: {error.message}</p>
-
-    const content = users.data.map(user => <User key={user.id} user={user} />)
-
-    const lastPage = () => {
-        dispatch(setPageNumber(Math.ceil(cardPacksTotalCount / pageCount)))
-    }
+    const totalPage = Math.ceil(cardPacksTotalCount / pageCount)
 
     const firstPage = () => {
-        dispatch(setPageNumber(1))
+        dispatch(setPageNumberAC(1))
     }
 
-    const pagesArray = Array(Math.ceil(cardPacksTotalCount / pageCount)).fill(1).map((i, index) => index + 1)
+    const lastPage = () => {
+        dispatch(setPageNumberAC(totalPage))
+    }
+
+    const PrevPage = () => {
+        dispatch(setPageNumberAC(page - 1))
+    }
+
+    const NextPage = () => {
+        dispatch(setPageNumberAC(page + 1))
+    }
+
+
+    const pagesArray = Array(totalPage).fill(1).map((i, index) => index + 1)
+
+
+    const [limit, setLimit] = useState(10);
+
+    const options = [
+        {value: 2, body: '2'},
+        {value: 4, body: '4'},
+        {value: 6, body: '6'},
+        {value: 8, body: '8'},
+    ]
+
+    const changePage = (value: number) => {
+        console.log(value)
+        setLimit(value)
+        console.log(value)
+        dispatch(setPageCountNumberAC(limit))
+    }
+
 
     return (
-        <nav className="nav-ex2">
-            <button onClick={firstPage} disabled={page === 1}>&lt;&lt;</button>
-            {/* Removed isPreviousData from PageButton to keep button focus color instead */}
-            {pagesArray.map(pg => <button key={pg} onClick={() => dispatch(setPageNumber(pg))}>{pg}</button>)}
-            <button onClick={lastPage} disabled={page === Math.ceil(cardPacksTotalCount / pageCount)}>&gt;&gt;</button>
-        </nav>
+            <nav className={s.nav_ex2}>
+                <button className={s.navButton} onClick={firstPage} disabled={page === 1}>&lt;&lt;</button>
+                <button className={s.navButton} onClick={PrevPage} disabled={page === 1}>&lt;</button>
+
+                {pagesArray.map(pg => <button key={pg} className={page == pg ? s.navButton_focus : s.navButton} onClick={() => dispatch(setPageNumberAC(pg))}>{pg}</button>)}
+
+                <button className={s.navButton} onClick={NextPage} disabled={page === totalPage}>&gt;</button>
+                <button className={s.navButton} onClick={lastPage} disabled={page === totalPage}>&gt;&gt;</button>
+
+                Show
+                <Selector value={limit}
+                          options={options}
+                          onChange={(value: number) => changePage(value)}
+                />
+                Cards per page
+            </nav>
     );
 };
 

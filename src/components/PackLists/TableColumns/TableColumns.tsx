@@ -10,9 +10,10 @@ type PropsType = {
     userId: string;
     setDeleteItem: (value: CardPacks | null) => void;
     setEditItem: (value: CardPacks | null) => void;
+    displayPacks: string;
 }
 
-export const TableColumns = ({cardPacks, columns, userId, setDeleteItem, setEditItem}: PropsType) => {
+export const TableColumns = ({cardPacks, columns, userId, setDeleteItem, setEditItem, displayPacks}: PropsType) => {
 
     const navigate = useNavigate()
 
@@ -25,11 +26,15 @@ export const TableColumns = ({cardPacks, columns, userId, setDeleteItem, setEdit
         <td>Ничего не найдено!</td>
     </tr>
 
+    const myFilteredPacks = cardPacks.filter(pack => pack.user_id === userId)
+
+    const packs = displayPacks === 'My' ? myFilteredPacks : cardPacks
+
     return (
         <>
-            {cardPacks.map((cardPack: CardPacks, index: number) => (
-
-                    <tr key={index} className={s.card}>
+            {
+                packs.map((cardPack: CardPacks, index: number) => {
+                  return  <tr key={index} className={s.card}>
                         {columns.map((c, index: number) => {
                             if (c.key === "actions" && cardPack.user_id === userId) {
 
@@ -55,7 +60,7 @@ export const TableColumns = ({cardPacks, columns, userId, setDeleteItem, setEdit
                             </td>
                         })}
                     </tr>
-                )
+            }
             )}
         </>
     )

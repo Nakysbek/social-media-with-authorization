@@ -1,0 +1,23 @@
+.nav_ex2 {
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.navButton {
+    width: 24px;
+    height: 24px;
+    margin: 5px;
+    border: none;
+    background: none;
+    border-radius: 3px;
+}
+
+.navButton_focus {
+    width: 24px;
+    height: 24px;
+    margin: 5px;
+    border: none;
+    border-radius: 3px;
+    background-color: #21268F;
+    color: white;
+}

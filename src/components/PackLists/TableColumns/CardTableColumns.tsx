@@ -2,6 +2,9 @@ import React from 'react';
 import s from "../Cards/Card/Card.module.css";
 import {CardsType} from "../../../redux/card-reducer";
 import {cardColumnsType} from "../Cards/Card/Card";
+import {Star} from "../../Rating/Star";
+import {AiFillStar, AiOutlineStar} from "react-icons/ai";
+import {start} from "repl";
 
 type CardTableColumnsType = {
     cards: CardsType[],
@@ -12,7 +15,13 @@ type CardTableColumnsType = {
 
 }
 
-export const CardTableColumns = ({cards, cardColumns, userId, setDeleteCard, setEditCardHandler} : CardTableColumnsType) => {
+export const CardTableColumns = ({
+                                     cards,
+                                     cardColumns,
+                                     userId,
+                                     setDeleteCard,
+                                     setEditCardHandler
+                                 }: CardTableColumnsType) => {
     return (
         <>
             {cards.map((item, index) => (
@@ -28,8 +37,19 @@ export const CardTableColumns = ({cards, cardColumns, userId, setDeleteCard, set
                                     Edit
                                 </button>
                             </td>
+                        } else if (card.key === 'rating') {
+                            const starCount = Array(item.rating).fill(<AiFillStar/>)
+                             if (starCount.length < 5) {
+                                 for (let i = starCount.length; i < 5; i++) {
+                                     starCount[i] = <AiOutlineStar/>
+                                 }
+                             }
+                            return (
+                                <div key={index} className={s.rating}>
+                                    {starCount}
+                                </div>
+                            )
                         }
-
                         return <td key={index}>
                             {item?.[card.key as keyof typeof item]}
                         </td>

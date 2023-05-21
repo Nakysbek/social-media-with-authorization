@@ -2,19 +2,15 @@ import React, {useEffect, useState} from 'react';
 import s from './Cards.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../redux/store";
-import {
-    addTableTC,
-    CardPacks,
-    changeTableTC,
-    removePackTC,
-    TableStateType
-} from "../../../redux/table-reducer";
+import {addTableTC, CardPacks, changeTableTC, removePackTC, TableStateType,} from "../../../redux/table-reducer";
 import {Modal} from "../../Modal/Modal";
 import {MyButton} from "../../../UI/MyButton/MyButton";
 import {TableColumns} from "../TableColumns/TableColumns";
 import {Loader} from "../../Loader/Loader";
 import {AuthStateType} from "../../../redux/auth-reducer";
+import {Pagination} from "../../Pagination/Pagination";
 import {ShowPackCards} from "./ShowPackCards/ShowPackCards";
+import {getTableBySearchTC, SearchParamsStateType} from "../../../redux/search-reducer";
 
 export type ColumnsType = {
     id: number;
@@ -24,17 +20,22 @@ export type ColumnsType = {
 
 export const Cards = () => {
     const dispatch = useDispatch<any>()
-
+    const {userId} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
+    const {cardPacks, loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
+    const {searchedCardPacks} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.searchReducer)
     const [addPackModalActive, setAddPackModalActive] = useState<boolean>(false)
     const [deleteItem, setDeleteItem] = useState<CardPacks | null>(null)
     const [editItem, setEditItem] = useState<CardPacks | null>(null)
     const [value, setValue] = useState<string>('')
     const [search, setSearch] = useState<string>('')
 
-    const {cardPacks, loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
-    const {userId} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
+    // const filteredPacks = cardPacks.filter((pack: CardPacks) => pack.name.toLowerCase().includes(search.toLowerCase()))
 
-    const filteredPacks = cardPacks.filter((pack: CardPacks) => pack.name.toLowerCase().includes(search.toLowerCase()))
+    const [displayPacks, setDisplayPacks] = useState('All')
+
+    const displayPacksHandler = (value: string) => {
+        setDisplayPacks(value)
+    }
 
     const addNewPack = (name: string) => {
         dispatch(addTableTC(name))
@@ -58,6 +59,10 @@ export const Cards = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
+        //// мини дебаунс
+        if (search.length > 0) {
+            dispatch(getTableBySearchTC(search.toLowerCase()))
+        }
     }
 
     const setEdit = (item: CardPacks | null) => {
@@ -76,15 +81,17 @@ export const Cards = () => {
 
     return (
         <div className={s.wrapper}>
-            <ShowPackCards/>
 
+            <ShowPackCards displayPacksHandler={displayPacksHandler}/>
 
             <div className={s.packs}>
-                <h1>Packs list</h1>
                 <div>
-                    <input className={s.input} type='text' placeholder="Search..." value={search}
-                           onChange={handleInputChange}/>
+                    <h1>Packs list</h1>
+
+                    <input className={s.input} type='text' placeholder="Search..." value={search} onChange={handleInputChange}/>
+
                     <button onClick={() => setAddPackModalActive(true)} className={s.button}>Add new pack</button>
+
                     <Modal active={addPackModalActive}>
                         <h3>Add new pack</h3>
                         <input value={value} onChange={onChangeName} type='text' placeholder='Name pack'/>
@@ -125,26 +132,31 @@ export const Cards = () => {
                         </>
                     }
                 </Modal>
+                <div>
+                    <table>
+                        <thead>
+                        <tr className={s.cards}>
+                            {columns.map((c, index) => <th key={index}>{c.title}</th>)}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {loading
+                            ? <Loader/>
+                            : <TableColumns
+                                displayPacks={displayPacks}
+                                cardPacks={search ? searchedCardPacks : cardPacks}
+                                columns={columns}
+                                userId={userId}
+                                setDeleteItem={setDeleteItem}
+                                setEditItem={setEdit}
+                            />
+                        }
+                        </tbody>
+                    </table>
 
-                <table>
-                    <thead>
-                    <tr className={s.cards}>
-                        {columns.map((c, index) => <th key={index}>{c.title}</th>)}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {loading
-                        ? <Loader/>
-                        : <TableColumns
-                            cardPacks={filteredPacks ? filteredPacks : cardPacks} // будет ли правильно таак писать?
-                            columns={columns}
-                            userId={userId}
-                            setDeleteItem={setDeleteItem}
-                            setEditItem={setEdit}
-                        />
-                    }
-                    </tbody>
-                </table>
+                    <Pagination/>
+
+                </div>
             </div>
         </div>
     );

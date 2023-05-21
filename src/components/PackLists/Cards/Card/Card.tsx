@@ -88,7 +88,7 @@ export const Card = () => {
         {id: 1, title: "Question", key: "question"},
         {id: 2, title: "Answer", key: "answer"},
         {id: 3, title: "Last updated", key: "updated"},
-        {id: 4, title: "Grade", key: "grade"},
+        {id: 4, title: "Rating", key: "rating"},
         {id: 5, title: "Actions", key: "actions"},
     ]
 
@@ -154,8 +154,13 @@ export const Card = () => {
                                 <MyButton onClick={() => {
                                     onChangeHandler(changeCard._id, cardQuestionValue, cardAnswerValue)
                                     setChangeCard(null)
-                                }}>Edit</MyButton>
-                                <MyButton onClick={() => setChangeCard(null)}>Cancel</MyButton>
+                                }}
+                                >Edit</MyButton>
+                                <MyButton onClick={() => {
+                                    onChangeHandler('', '', '',)
+                                    setChangeCard(null)
+                                }}
+                                >Cancel</MyButton>
                             </div>
                         </>
                     }

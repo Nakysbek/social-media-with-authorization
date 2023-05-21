@@ -48,7 +48,7 @@ export type TableStateType = {
     loading: boolean
 }
 
-const initialState = {
+const initialState : TableStateType = {
     cardPacks: [
         {
             _id: "",
@@ -84,7 +84,7 @@ export const tableReducer = (state: TableStateType = initialState, action: Actio
     }
 }
 
-const getTableAC = (data: GetTableAT) => ({type: 'GET_TABLE', data: data});
+const getTableAC = (data: any): GetTableAT => ({type: 'GET_TABLE', data: data});
 const removePackAC = (id: string) => ({type: "REMOVE_TABLE", id});
 const addPackAC = (newPack: CardPacks) => ({type: "ADD_PACK", newPack});
 const changePackAC = (changePack: CardPacks) => ({type: "CHANGE_PACK", changePack});
@@ -106,7 +106,6 @@ export const getTableTC = () => async (dispatch: Dispatch, getState: () => AppRo
 export const addTableTC = (name: string) => async (dispatch: Dispatch) => {
     try {
         dispatch(setLoadingAC(true))
-        console.log(setLoadingAC)
         const response = await PacksService.addTable(name)
         dispatch(addPackAC(response.data.newCardsPack))
     } catch (e) {
