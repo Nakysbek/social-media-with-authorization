@@ -1,6 +1,6 @@
 .nav_ex2 {
     margin-top: 1rem;
-    justify-content: center;
+    display: flex;
 }
 
 .navButton {
@@ -20,4 +20,18 @@
     border-radius: 3px;
     background-color: #21268F;
     color: white;
+}
+
+.pagination {
+}
+
+.selector {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+}
+
+.selector h5 {
+    font-weight: normal;
+    margin: 0 5px 0 5px;
 }

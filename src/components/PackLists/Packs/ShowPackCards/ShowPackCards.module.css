@@ -1,6 +1,6 @@
 .showPacksCards {
     width: 243px;
-    height: 636px;
+    height: 615px;
     background: #ECECF9;
     border-radius: 8px 0 0 8px;
     padding: 15px;
@@ -18,18 +18,34 @@
     justify-content: center;
 }
 
-.showPacksCards button {
+.inactiveButton {
     width: 99px;
     height: 36px;
     color: white;
     background: #21268F;
+    border: none;
+    border-radius: 3px;
 }
 
-.showPacksCards button:hover {
+.inactiveButton:hover {
     width: 99px;
     height: 36px;
     color: white;
     background: #2d53cb;
+}
+
+.activeButton {
+    width: 99px;
+    height: 36px;
+    background: white;
+    border: none;
+    border-radius: 3px;
+}
+
+.activeButton:hover {
+    width: 99px;
+    height: 36px;
+    background: whitesmoke;
 }
 
 

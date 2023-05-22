@@ -2,27 +2,10 @@ import {Dispatch} from "redux";
 import {CardService} from "../api/api";
 import {setLoadingAC} from "./table-reducer";
 
-type GetCardAT = {
-    type: 'GET_CARD',
-    data: CardsType[]
-}
-
-type AddCardAT = {
-    type: 'ADD_CARD',
-    newCard: CardsType
-}
-
-type RemoveCardAT = {
-    type: 'REMOVE_CARD',
-    cardId: string
-}
-
-type ChangeCardAT = {
-    type: 'CHANGE_CARD',
-    changeCard: CardsType
-}
-
-type ActionType = GetCardAT | AddCardAT | RemoveCardAT | ChangeCardAT
+type ActionType = ReturnType<typeof getCardAC>
+    | ReturnType<typeof addCardAC>
+    | ReturnType<typeof removeCardAC>
+    | ReturnType<typeof changeCardAC>
 
 export type CardsType = {
     answer: string
@@ -87,16 +70,30 @@ export const cardReducer = (state: CardsStateType = initialState, action: Action
         case 'REMOVE_CARD':
             return {...state, cards: state.cards.filter(c => c._id !== action.cardId)}
         case 'CHANGE_CARD':
-            return {...state, cards: state.cards.map(card => card._id === action.changeCard._id ? action.changeCard : card)}
+            return {
+                ...state,
+                cards: state.cards.map(card => card._id === action.changeCard._id ? action.changeCard : card)
+            }
         default:
             return state;
     }
 }
 
-const getCardAC = (data: CardsType[]): GetCardAT => ({type: 'GET_CARD', data});
-const addCardAC = (newCard: CardsType): AddCardAT  => ({type: 'ADD_CARD', newCard})
-const removeCardAC = (cardId: string): RemoveCardAT => ({type: 'REMOVE_CARD', cardId})
-const changeCardAC = (changeCard: CardsType): ChangeCardAT => ({type: 'CHANGE_CARD', changeCard})
+const getCardAC = (data: CardsType[]) => ({
+    type: 'GET_CARD' as const, data
+});
+
+const addCardAC = (newCard: CardsType) => ({
+    type: 'ADD_CARD' as const, newCard
+})
+
+const removeCardAC = (cardId: string) => ({
+    type: 'REMOVE_CARD' as const, cardId
+})
+
+const changeCardAC = (changeCard: CardsType) => ({
+    type: 'CHANGE_CARD' as const, changeCard
+})
 
 export const getCardTC = (id?: string) => async (dispatch: Dispatch) => {
     try {

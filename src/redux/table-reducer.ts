@@ -2,32 +2,11 @@ import {Dispatch} from "redux";
 import {PacksService} from "../api/api";
 import {AppRootStateType} from "./store";
 
-type GetTableAT = {
-    type: 'GET_TABLE',
-    data: any,
-}
-
-type RemoveTableAT = {
-    type: 'REMOVE_TABLE',
-    id: string,
-}
-
-type AddPackAT = {
-    type: "ADD_PACK",
-    newPack: CardPacks,
-}
-
-type ChangePackAT = {
-    type: "CHANGE_PACK",
-    changePack: CardPacks,
-}
-
-type SetLoadingAT = {
-    type: "SET_LOADING",
-    loading: boolean
-}
-
-type ActionType = GetTableAT | RemoveTableAT | AddPackAT | ChangePackAT | SetLoadingAT;
+type ActionType = ReturnType<typeof getTableAC>
+    | ReturnType<typeof removePackAC>
+    | ReturnType<typeof addPackAC>
+    | ReturnType<typeof changePackAC>
+    | ReturnType<typeof setLoadingAC>
 
 export type CardPacks = {
     _id: string,
@@ -84,11 +63,11 @@ export const tableReducer = (state: TableStateType = initialState, action: Actio
     }
 }
 
-const getTableAC = (data: any): GetTableAT => ({type: 'GET_TABLE', data: data});
-const removePackAC = (id: string) => ({type: "REMOVE_TABLE", id});
-const addPackAC = (newPack: CardPacks) => ({type: "ADD_PACK", newPack});
-const changePackAC = (changePack: CardPacks) => ({type: "CHANGE_PACK", changePack});
-export const setLoadingAC = (loading: boolean) => ({type: "SET_LOADING", loading})
+const getTableAC = (data: any) => ({type: 'GET_TABLE' as const, data: data});
+const removePackAC = (id: string) => ({type: "REMOVE_TABLE" as const, id});
+const addPackAC = (newPack: CardPacks) => ({type: "ADD_PACK" as const, newPack});
+const changePackAC = (changePack: CardPacks) => ({type: "CHANGE_PACK" as const, changePack});
+export const setLoadingAC = (loading: boolean) => ({type: "SET_LOADING" as const, loading})
 
 export const getTableTC = () => async (dispatch: Dispatch, getState: () => AppRootStateType) => {
     const state = getState();

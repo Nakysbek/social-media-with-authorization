@@ -7,7 +7,7 @@ import {Header} from "../Header/Header";
 import {getTableTC} from "../../redux/table-reducer";
 import {useNavigate} from "react-router-dom";
 import {SearchParamsStateType} from "../../redux/search-reducer";
-import {Cards} from "./Cards/Cards";
+import {Packs} from "./Packs/Packs";
 
 export const PackLists = () => {
     const {isAuth} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
@@ -29,7 +29,7 @@ export const PackLists = () => {
     return (
         <div className={s.packList}>
             <Header/>
-            <Cards/>
+            <Packs/>
         </div>
     )
 }

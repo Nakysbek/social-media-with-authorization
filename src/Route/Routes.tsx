@@ -3,7 +3,7 @@ import {Registration} from "../components/Registration/Registration";
 import {Login} from "../components/Login/Login";
 import {PackLists} from "../components/PackLists/PackLists";
 import {CARD_ROUTE, CARDS_ROUTE, LOGIN_ROUTE, PROFILE_ROUTE, REGISTRATION_ROUTE} from "../Utils/Utils";
-import {Card} from "../components/PackLists/Cards/Card/Card";
+import {Cards} from "../components/PackLists/Cards/Cards";
 import {Profile} from "../components/Profile/Profile";
 
 export const routes = [
@@ -25,7 +25,7 @@ export const routes = [
     },
     {
         path: CARD_ROUTE,
-        element: <Card/>
+        element: <Cards/>
     }
 ]
 

@@ -1,165 +1,192 @@
 import React, {useEffect, useState} from 'react';
 import s from './Cards.module.css'
+import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../redux/store";
-import {addTableTC, CardPacks, changeTableTC, removePackTC, TableStateType,} from "../../../redux/table-reducer";
+import {authMeTC, AuthStateType} from "../../../redux/auth-reducer";
+import {Header} from "../../Header/Header";
+import {
+    addCardTC,
+    CardsStateType,
+    CardsType,
+    changeCardTC,
+    getCardTC,
+    removeCardTC
+} from "../../../redux/card-reducer";
 import {Modal} from "../../Modal/Modal";
 import {MyButton} from "../../../UI/MyButton/MyButton";
-import {TableColumns} from "../TableColumns/TableColumns";
+import {CardTableColumns} from "./CardTableColumns/CardTableColumns";
 import {Loader} from "../../Loader/Loader";
-import {AuthStateType} from "../../../redux/auth-reducer";
-import {Pagination} from "../../Pagination/Pagination";
-import {ShowPackCards} from "./ShowPackCards/ShowPackCards";
-import {getTableBySearchTC, SearchParamsStateType} from "../../../redux/search-reducer";
+import {TableStateType} from "../../../redux/table-reducer";
 
-export type ColumnsType = {
-    id: number;
-    title: string;
-    key: string;
+export type cardColumnsType = {
+    id: number,
+    title: string,
+    key: string,
 }
 
 export const Cards = () => {
+
+    const navigate = useNavigate()
+    const {cardsPackId} = useParams()
     const dispatch = useDispatch<any>()
+
+    const {isAuth} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
+    const {cards} = useSelector<AppRootStateType, CardsStateType>(state => state.cardReducer)
     const {userId} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
-    const {cardPacks, loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
-    const {searchedCardPacks} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.searchReducer)
-    const [addPackModalActive, setAddPackModalActive] = useState<boolean>(false)
-    const [deleteItem, setDeleteItem] = useState<CardPacks | null>(null)
-    const [editItem, setEditItem] = useState<CardPacks | null>(null)
-    const [value, setValue] = useState<string>('')
-    const [search, setSearch] = useState<string>('')
+    const {loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
 
-    // const filteredPacks = cardPacks.filter((pack: CardPacks) => pack.name.toLowerCase().includes(search.toLowerCase()))
 
-    const [displayPacks, setDisplayPacks] = useState('All')
+    const [addCardModalActive, setAddCardModalActive] = useState<boolean>(false)
+    const [cardQuestionValue, setCardQuestionValue] = useState<string>('')
+    const [cardAnswerValue, setCardAnswerValue] = useState<string>('')
+    const [deleteCard, setDeleteCard] = useState<CardsType | null>(null)
+    const [changeCard, setChangeCard] = useState<CardsType | null>(null)
+    const [searchCard, setSearchCard] = useState<string>('')
 
-    const displayPacksHandler = (value: string) => {
-        setDisplayPacks(value)
+    const filteredCards = cards.filter((card: CardsType) => card.question.toLowerCase().includes(searchCard.toLowerCase()))
+
+    const addNewCard = (question: string, answer: string) => {
+        dispatch(addCardTC(question, answer, cardsPackId))
+        setCardQuestionValue('')
+        setCardAnswerValue('')
+        setAddCardModalActive(false)
     }
 
-    const addNewPack = (name: string) => {
-        dispatch(addTableTC(name))
-        setValue('')
-        setAddPackModalActive(false)
+    const removeCard = (cardId: string) => {
+        dispatch(removeCardTC(cardId))
+        setDeleteCard(null)
     }
 
-    const removeTable = (id: string) => {
-        dispatch(removePackTC(id))
-        setDeleteItem(null)
-    }
-
-    const changeTable = (id: string, newName: string) => {
-        dispatch(changeTableTC(id, newName))
-        setEditItem(null)
-    }
-
-    const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value)
-    }
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value);
-        //// мини дебаунс
-        if (search.length > 0) {
-            dispatch(getTableBySearchTC(search.toLowerCase()))
+    const setEditCardHandler = (card: CardsType | null) => {
+        setChangeCard(card)
+        if (card) {
+            setCardQuestionValue(card.question)
+            setCardAnswerValue(card.answer)
         }
     }
 
-    const setEdit = (item: CardPacks | null) => {
-        setEditItem(item)
-        if (item) {
-            setValue(item.name)
-        }
+    const onChangeHandler = (cardId: string, cardQuestionValue: string, cardAnswerValue: string) => {
+        dispatch(changeCardTC(cardId, cardQuestionValue, cardAnswerValue))
+        setCardQuestionValue('')
+        setCardAnswerValue('')
+        setChangeCard(null)
     }
 
-    const columns: ColumnsType[] = [
-        {id: 1, title: "Name", key: "name"},
-        {id: 2, title: "Cards", key: "cardsCount"},
-        {id: 3, title: "Created by", key: "user_name"},
-        {id: 4, title: "Actions", key: "actions"},
+    const onChangeCardQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCardQuestionValue(e.target.value)
+    }
+    const onChangeCardAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCardAnswerValue(e.target.value)
+    }
+
+    const handleInputCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        setSearchCard(e.target.value);
+    }
+
+    const cardColumns: cardColumnsType[] = [
+        {id: 1, title: "Question", key: "question"},
+        {id: 2, title: "Answer", key: "answer"},
+        // {id: 3, title: "Last updated", key: "updated"},
+        {id: 4, title: "Rating", key: "rating"},
+        {id: 5, title: "Actions", key: "actions"},
     ]
 
+    useEffect(() => {
+        if (!isAuth)
+            dispatch(authMeTC(navigate))
+    }, [])
+
+    useEffect(() => {
+        if (isAuth) {
+            dispatch(getCardTC(cardsPackId))
+        }
+    }, [isAuth])
+
     return (
-        <div className={s.wrapper}>
+        <>
+            <Header/>
+            <div className={s.cardWrapper}>
+                <div className={s.head}>
+                    <button onClick={() => navigate(-1)}>back</button>
+                    <h1>Pack Name</h1>
+                </div>
+                <div className={s.main}>
+                    <input type='text' placeholder="Search..." value={searchCard} onChange={handleInputCardChange}/>
+                    <button onClick={() => {
+                        setAddCardModalActive(true)
+                    }}>Add new card
+                    </button>
 
-            <ShowPackCards displayPacksHandler={displayPacksHandler}/>
-
-            <div className={s.packs}>
-                <div>
-                    <h1>Packs list</h1>
-
-                    <input className={s.input} type='text' placeholder="Search..." value={search} onChange={handleInputChange}/>
-
-                    <button onClick={() => setAddPackModalActive(true)} className={s.button}>Add new pack</button>
-
-                    <Modal active={addPackModalActive}>
-                        <h3>Add new pack</h3>
-                        <input value={value} onChange={onChangeName} type='text' placeholder='Name pack'/>
+                    <Modal active={addCardModalActive}>
+                        <h3>Add new card</h3>
+                        <input value={cardQuestionValue} onChange={onChangeCardQuestion} type='text'
+                               placeholder='Question'/>
+                        <input value={cardAnswerValue} onChange={onChangeCardAnswer} type='text' placeholder='Answer'/>
                         <div>
-                            <MyButton onClick={() => addNewPack(value)}>Add</MyButton>
-                            <MyButton onClick={() => setAddPackModalActive(false)}>Cancel</MyButton>
+                            <MyButton onClick={() => addNewCard(cardQuestionValue, cardAnswerValue)}>Add</MyButton>
+                            <MyButton onClick={() => setAddCardModalActive(false)}>Cancel</MyButton>
                         </div>
                     </Modal>
                 </div>
 
-                <Modal active={!!deleteItem}>
-                    {deleteItem &&
+                <Modal active={!!deleteCard}>
+                    {deleteCard &&
                         <>
-                            <h3>Do you really want to remove {deleteItem.name}?</h3>
+                            <h3>Do you really want to remove {deleteCard.question}?</h3>
                             <div>
-                                <MyButton onClick={() => removeTable(deleteItem._id)}>Delete</MyButton>
-                                <MyButton onClick={() => setDeleteItem(null)}>Cancel</MyButton>
+                                <MyButton onClick={() => removeCard(deleteCard._id)}>Delete</MyButton>
+                                <MyButton onClick={() => setDeleteCard(null)}>Cancel</MyButton>
                             </div>
                         </>
                     }
                 </Modal>
 
-                <Modal active={!!editItem}>
-                    {editItem &&
+                <Modal active={!!changeCard}>
+                    {changeCard &&
                         <>
-                            <h3>Do you want to edit the name {editItem.name}?</h3>
-                            <input value={value} onChange={onChangeName} type='text' placeholder='Name pack'/>
+                            <h3>Edit the card</h3>
+                            <input value={cardQuestionValue} onChange={onChangeCardQuestion} type='text'
+                                   placeholder='Question'/>
+                            <input value={cardAnswerValue} onChange={onChangeCardAnswer} type='text'
+                                   placeholder='Answer'/>
                             <div>
                                 <MyButton onClick={() => {
-                                    changeTable(editItem._id, value)
-                                    setValue('')
-                                }}>Edit</MyButton>
+                                    onChangeHandler(changeCard._id, cardQuestionValue, cardAnswerValue)
+                                    setChangeCard(null)
+                                }}
+                                >Edit</MyButton>
                                 <MyButton onClick={() => {
-                                    setEditItem(null)
-                                    setValue('')
-                                }}>Cancel</MyButton>
+                                    onChangeHandler('', '', '',)
+                                    setChangeCard(null)
+                                }}
+                                >Cancel</MyButton>
                             </div>
                         </>
                     }
                 </Modal>
-                <div>
-                    <table>
-                        <thead>
-                        <tr className={s.cards}>
-                            {columns.map((c, index) => <th key={index}>{c.title}</th>)}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {loading
-                            ? <Loader/>
-                            : <TableColumns
-                                displayPacks={displayPacks}
-                                cardPacks={search ? searchedCardPacks : cardPacks}
-                                columns={columns}
-                                userId={userId}
-                                setDeleteItem={setDeleteItem}
-                                setEditItem={setEdit}
-                            />
-                        }
-                        </tbody>
-                    </table>
 
-                    <Pagination/>
-
-                </div>
+                <table>
+                    <thead>
+                    <tr className={s.cardHead}>
+                        {cardColumns.map((card, index) => <th key={index} className={s.oneCard}>{card.title}</th>)}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loading
+                        ? <Loader/>
+                        : <CardTableColumns cards={filteredCards ? filteredCards : cards}
+                                            cardColumns={cardColumns}
+                                            userId={userId}
+                                            setDeleteCard={setDeleteCard}
+                                            setEditCardHandler={setEditCardHandler}
+                        />
+                    }
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </>
     );
 };
-
 

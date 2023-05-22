@@ -1,0 +1,60 @@
+.card {
+    width: 669px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.card td {
+    width: 150px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.blueButton {
+    width: 48px;
+    height: 24px;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    margin-left: 1px;
+    background: #D7D8EF;
+    color: #21268F;
+}
+
+.blueButton:hover {
+    width: 48px;
+    height: 24px;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    margin-left: 1px;
+    background: #8688a8;
+    color: #21268F;
+}
+
+.orangeButton {
+    width: 48px;
+    height: 24px;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    margin-left: 1px;
+    background: #F1453D;
+    color: #FFFFFF;
+}
+
+.orangeButton:hover {
+    width: 48px;
+    height: 24px;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    margin-left: 1px;
+    background: #c74e1e;
+    color: #FFFFFF;
+}

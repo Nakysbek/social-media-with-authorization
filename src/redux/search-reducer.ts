@@ -1,13 +1,11 @@
-import {CardPacks, setLoadingAC} from "./table-reducer";
-import {Dispatch} from "redux";
-import {SearchPacksService} from "../api/api";
+import {CardPacks} from "./table-reducer";
 
-type ActionsType = ReturnType<typeof getTableBySearchAC>
+type ActionsType =
     | ReturnType<typeof setPageNumberAC>
     | ReturnType<typeof setPageCountNumberAC>
     | ReturnType<typeof setMinMaxMeaningAC>
-
-
+    | ReturnType<typeof setShowPacksAC>
+    | ReturnType<typeof getTableBySearchAC>
 
 export type SearchParamsStateType = {
     searchedCardPacks: CardPacks[]
@@ -17,6 +15,7 @@ export type SearchParamsStateType = {
     sortPacks?: string,
     page: number,
     pageCount: number,
+    user_id: string,
 }
 
 const initialSearchState: SearchParamsStateType = {
@@ -35,26 +34,29 @@ const initialSearchState: SearchParamsStateType = {
     max: 25,
     sortPacks: '',
     page: 1,
-    pageCount: 8
+    pageCount: 8,
+    user_id: '',
 }
 
 export const searchReducer = (state: SearchParamsStateType = initialSearchState, action: ActionsType): SearchParamsStateType => {
     switch (action.type) {
-        case 'GET_TABLE_BY_SEARCH':
-            return {...state, searchedCardPacks: action.searchedCardPacks};
         case 'SET_PAGE_NUMBER':
             return {...state, page: action.page};
         case 'SET_PAGE_COUNT_NUMBER':
             return {...state, pageCount: action.pageCount}
         case 'SET_MIN_MAX_MEANING':
             return {...state, min: action.min, max: action.max}
+        case 'SET_SHOW_PACKS':
+            return {...state, user_id: action.userId}
+        case 'SET_MY_GET_TABLE':
+            return {...state, packName: action.packName}
         default:
             return state;
     }
 }
 
-export const getTableBySearchAC = (searchedCardPacks: any) => ({
-    type: 'GET_TABLE_BY_SEARCH' as const, searchedCardPacks
+export const getTableBySearchAC = (packName: string) => ({
+    type: 'SET_MY_GET_TABLE' as const, packName
 })
 
 export const setPageNumberAC = (page: number) => ({
@@ -69,15 +71,7 @@ export const setMinMaxMeaningAC = (min: number, max: number) => ({
     type: 'SET_MIN_MAX_MEANING' as const, min: min, max: max
 })
 
+export const setShowPacksAC = (userId: string) => ({
+    type: 'SET_SHOW_PACKS' as const, userId: userId
+})
 
-export const getTableBySearchTC = (name: string) => async (dispatch: Dispatch) => {
-    try {
-        dispatch(setLoadingAC(true))
-        const response = await SearchPacksService.getSearchedPacks(name)
-        dispatch(getTableBySearchAC(response.data.cardPacks))
-    } catch (e) {
-        console.error('error:', e);
-    } finally {
-        dispatch(setLoadingAC(false))
-    }
-}

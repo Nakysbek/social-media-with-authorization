@@ -27,7 +27,7 @@ type SetLoadingAT = {
     loading: boolean
 }
 
-type ActionType = | RegistrationAT | LoginAT | AuthMeAT | SetLoadingAT | ReturnType<typeof setError>
+type ActionType = | RegistrationAT | LoginAT | AuthMeAT | SetLoadingAT | ReturnType<typeof setErrorAC>
 
 export type AuthStateType = {
     email: string
@@ -67,7 +67,7 @@ export const authReducer = (state: AuthStateType = initialState, action: ActionT
 }
 
 const registrationAC = (email: string) => ({type: 'REGISTRATION', email})
-const setError = (text: string) => ({type: 'SET_ERROR' as const, text})
+const setErrorAC = (text: string) => ({type: 'SET_ERROR' as const, text})
 export const setLoadingAC = (loading: boolean) => ({type: "SET_LOADING", loading})
 
 const loginAC = (email: string, token: string, userId: string, isAuth: boolean) => ({
@@ -87,7 +87,7 @@ export const registrationTC = (
         dispatch(registrationAC(data.email))
         navigate('/login')
     } catch (e: any) {
-        dispatch(setError(e.response.data.error))
+        dispatch(setErrorAC(e.response.data.error))
     }
 }
 
@@ -103,7 +103,7 @@ export const loginTC = (
         dispatch(loginAC(data.email, data.token, data._id, true))
         navigate('/cards')
     } catch (e: any) {
-        dispatch(setError(e.response.data.error))
+        dispatch(setErrorAC(e.response.data.error))
     } finally {
         dispatch(setLoadingAC(false))
     }
