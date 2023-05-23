@@ -65,7 +65,8 @@ export const getTableTC = () => async (dispatch: Dispatch, getState: () => AppRo
     const state = getState();
     try {
         dispatch(setLoadingAC(true))
-        const response = await PacksService.getTable(state.searchReducer)
+        const response = await PacksService.getTable(state.PackSearchReducer)
+        console.log('table',response.data)
         dispatch(getTableAC(response.data))
     } catch (e) {
         console.error('error:', e);

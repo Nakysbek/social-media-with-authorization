@@ -1,5 +1,7 @@
 import axios from "axios";
-import {SearchParamsStateType} from "../redux/search-reducer";
+import {SearchParamsStateType} from "../redux/pack-search-reducer";
+import {CardsStateType} from "../redux/card-reducer";
+import {CardSearchReducerType} from "../redux/cardSearch-reducer";
 
 export const $api = axios.create({
     baseURL: "https://cards-nya-back-production.up.railway.app/2.0",
@@ -55,6 +57,22 @@ export class PacksService {
 }
 
 export class CardService {
+    static async getNewCard(cardsPackId?: string, params?: CardSearchReducerType) {
+        if (params) {
+            const keys = Object.keys(params)
+            let searchParams = ""
+            keys.forEach((k) => {
+                const value = params[k as keyof CardSearchReducerType]
+                if (value) {
+                    searchParams += "&" + k + "=" + value
+                }
+            })
+            return await $api.get(`cards/card?cardsPack_id=${cardsPackId}` + searchParams)
+        } else {
+            return await $api.get(`cards/card?cardsPack_id=${cardsPackId}`)
+        }
+    }
+
     static async getCard(cardsPackId?: string) {
         return await $api.get(`cards/card?cardsPack_id=${cardsPackId}`)
     }

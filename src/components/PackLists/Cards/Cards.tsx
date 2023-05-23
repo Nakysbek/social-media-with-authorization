@@ -11,14 +11,16 @@ import {
     CardsType,
     changeCardTC,
     getCardTC,
-    removeCardTC
+    removeCardTC,
 } from "../../../redux/card-reducer";
 import {Modal} from "../../Modal/Modal";
 import {MyButton} from "../../../UI/MyButton/MyButton";
 import {CardTableColumns} from "./CardTableColumns/CardTableColumns";
 import {Loader} from "../../Loader/Loader";
 import {TableStateType} from "../../../redux/table-reducer";
-import {getTableBySearchCardAC} from "../../../redux/cardSearch-reducer";
+import {CardSearchReducerType, getCardsBySearchAC, setCardsPageCountAC} from "../../../redux/cardSearch-reducer";
+import debounce from "lodash.debounce";
+import {CardsPagination} from "../../Pagination/CardsPagination";
 
 export type cardColumnsType = {
     id: number,
@@ -36,7 +38,7 @@ export const Cards = () => {
     const {cards} = useSelector<AppRootStateType, CardsStateType>(state => state.cardReducer)
     const {userId} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
     const {loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
-
+    const searchParams = useSelector<AppRootStateType, CardSearchReducerType>(state => state.cardSearchReducer)
 
     const [addCardModalActive, setAddCardModalActive] = useState<boolean>(false)
     const [cardQuestionValue, setCardQuestionValue] = useState<string>('')
@@ -81,8 +83,14 @@ export const Cards = () => {
 
     const handleInputCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchCard(e.target.value);
-        dispatch(getTableBySearchCardAC(searchCard))
+        searchDebounce(searchCard)
     }
+
+    const searchDebounce = React.useCallback(
+        debounce((searchValue) => {
+            dispatch(getCardsBySearchAC(searchValue.toLowerCase()))
+        }, 1000), []
+    )
 
     const cardColumns: cardColumnsType[] = [
         {id: 1, title: "Question", key: "question"},
@@ -101,7 +109,7 @@ export const Cards = () => {
         if (isAuth) {
             dispatch(getCardTC(cardsPackId))
         }
-    }, [isAuth])
+    }, [isAuth, searchParams])
 
     return (
         <>
@@ -184,6 +192,9 @@ export const Cards = () => {
                     }
                     </tbody>
                 </table>
+
+                <CardsPagination/>
+
             </div>
         </>
     );

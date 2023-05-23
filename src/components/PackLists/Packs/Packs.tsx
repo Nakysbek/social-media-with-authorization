@@ -9,7 +9,7 @@ import {PackTableColumns} from "./PackTableColumns/PackTableColumns";
 import {Loader} from "../../Loader/Loader";
 import {AuthStateType} from "../../../redux/auth-reducer";
 import {Pagination} from "../../Pagination/Pagination";
-import {getTableBySearchAC, setShowPacksAC} from "../../../redux/search-reducer";
+import {getTableBySearchAC, SearchParamsStateType, setShowPacksAC} from "../../../redux/pack-search-reducer";
 import debounce from "lodash.debounce";
 import {ShowPackCards} from "./ShowPackCards/ShowPackCards";
 
@@ -23,6 +23,8 @@ export const Packs = () => {
     const dispatch = useDispatch<any>()
     const {userId} = useSelector<AppRootStateType, AuthStateType>(state => state.authReducer)
     const {cardPacks, loading} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
+    const {cardPacksTotalCount} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
+    const {page, pageCount} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.PackSearchReducer)
     const [addPackModalActive, setAddPackModalActive] = useState<boolean>(false)
     const [deleteItem, setDeleteItem] = useState<CardPacks | null>(null)
     const [editItem, setEditItem] = useState<CardPacks | null>(null)

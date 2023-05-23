@@ -3,7 +3,7 @@ import s from './ShowPackCards.module.css'
 import {Slider} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../../redux/store";
-import {SearchParamsStateType, setMinMaxMeaningAC} from "../../../../redux/search-reducer";
+import {SearchParamsStateType, setMinMaxMeaningAC} from "../../../../redux/pack-search-reducer";
 import debounce from "lodash.debounce";
 
 type ShowPackCardsType = {
@@ -14,7 +14,7 @@ type ShowPackCardsType = {
 export const ShowPackCards = ({displayPacksHandler, userId}: ShowPackCardsType) => {
 
     const dispatch = useDispatch<any>()
-    const {min, max} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.searchReducer)
+    const {min, max} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.PackSearchReducer)
     const [value, setValue] = useState<number[]>([min, max]);
     const [active, setActive] = useState('All')
 

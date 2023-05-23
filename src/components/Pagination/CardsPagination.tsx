@@ -1,41 +1,34 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../redux/store";
-import {
-    SearchParamsStateType,
-    setMinMaxMeaningAC,
-    setPageCountNumberAC,
-    setPageNumberAC
-} from "../../redux/pack-search-reducer";
 import s from './Pagination.module.css'
-import {TableStateType} from "../../redux/table-reducer";
 import {Selector} from "../Selector/Selector";
-import debounce from "lodash.debounce";
+import {CardsStateType} from "../../redux/card-reducer";
+import {CardSearchReducerType, setCardsPageNumberAC, setCardsPageCountAC} from "../../redux/cardSearch-reducer";
 
-
-export const Pagination = () => {
+export const CardsPagination = () => {
 
     const dispatch = useDispatch<any>()
 
-    const {cardPacksTotalCount} = useSelector<AppRootStateType, TableStateType>(state => state.tableReducer)
-    const {page, pageCount} = useSelector<AppRootStateType, SearchParamsStateType>(state => state.PackSearchReducer)
+    const {cardsTotalCount} = useSelector<AppRootStateType, CardsStateType>(state => state.cardReducer)
+    const {page, pageCount} = useSelector<AppRootStateType, CardSearchReducerType>(state => state.cardSearchReducer)
 
-    const totalPage = Math.ceil(cardPacksTotalCount / pageCount)
+    const totalPage = Math.ceil(cardsTotalCount / pageCount)
 
     const firstPage = () => {
-        dispatch(setPageNumberAC(1))
+        dispatch(setCardsPageNumberAC(1))
     }
 
     const lastPage = () => {
-        dispatch(setPageNumberAC(totalPage))
+        dispatch(setCardsPageNumberAC(totalPage))
     }
 
     const PrevPage = () => {
-        dispatch(setPageNumberAC(page - 1))
+        dispatch(setCardsPageNumberAC(page - 1))
     }
 
     const NextPage = () => {
-        dispatch(setPageNumberAC(page + 1))
+        dispatch(setCardsPageNumberAC(page + 1))
     }
 
     const pagesArray = Array(totalPage).fill(1).map((i, index) => index + 1)
@@ -51,7 +44,7 @@ export const Pagination = () => {
 
     const changePage = (value: number) => {
         setLimit(value)
-        dispatch(setPageCountNumberAC(value))
+        dispatch(setCardsPageCountAC(value))
     }
 
     return (
@@ -63,7 +56,7 @@ export const Pagination = () => {
                 {pagesArray.map(pg =>
                     <button key={pg}
                             className={page == pg ? s.navButton_focus : s.navButton}
-                            onClick={() => dispatch(setPageNumberAC(pg))}>
+                            onClick={() => dispatch(setCardsPageNumberAC(pg))}>
                         {pg}
                     </button>
                 )}

@@ -24,7 +24,7 @@ const initialSearchState: SearchParamsStateType = {
     user_id: '',
 }
 
-export const searchReducer = (state: SearchParamsStateType = initialSearchState, action: ActionsType): SearchParamsStateType => {
+export const PackSearchReducer = (state: SearchParamsStateType = initialSearchState, action: ActionsType): SearchParamsStateType => {
     switch (action.type) {
         case 'GET_TABLE_BY_SEARCH':
             return {...state, packName: action.packName}

@@ -1,8 +1,13 @@
 import {Dispatch} from "redux";
 import {CardService} from "../api/api";
 import {setLoadingAC} from "./table-reducer";
+import {AppRootStateType} from "./store";
 
-type ActionType = ReturnType<typeof getCardAC> | ReturnType<typeof addCardAC> | ReturnType<typeof removeCardAC> | ReturnType<typeof changeCardAC>
+type ActionType = ReturnType<typeof getCardAC>
+    | ReturnType<typeof addCardAC>
+    | ReturnType<typeof removeCardAC>
+    | ReturnType<typeof changeCardAC>
+
 
 export type CardsType = {
     answer: string
@@ -24,10 +29,6 @@ export type CardsType = {
 export type CardsStateType = {
     cards: CardsType[]
     cardsTotalCount: number
-    maxGrade: number
-    minGrade: number
-    page: number
-    pageCount: number
     packUserId: number
 }
 
@@ -51,38 +52,37 @@ const initialState = {
         },
     ],
     cardsTotalCount: 0,
-    maxGrade: 0,
-    minGrade: 0,
-    page: 0,
-    pageCount: 0,
     packUserId: 0,
 }
 
 export const cardReducer = (state: CardsStateType = initialState, action: ActionType): CardsStateType => {
     switch (action.type) {
         case 'GET_CARD':
-            return {...state, cards: action.data}
+            return {...state, cardsTotalCount: action.cardsTotalCount, cards: action.data}
         case 'ADD_CARD':
             return {...state, cards: [action.newCard, ...state.cards]}
         case 'REMOVE_CARD':
             return {...state, cards: state.cards.filter(c => c._id !== action.cardId)}
         case 'CHANGE_CARD':
             return {...state, cards: state.cards.map(card => card._id === action.changeCard._id ? action.changeCard : card)}
+
         default:
             return state;
     }
 }
+//// Как достать одним аргументом тотал каунт карты?
 
-const getCardAC = (data: CardsType[]) => ({type: 'GET_CARD' as const, data});
+const getCardAC = (data: CardsType[], cardsTotalCount: number) => ({type: 'GET_CARD' as const, data, cardsTotalCount});
 const addCardAC = (newCard: CardsType)  => ({type: 'ADD_CARD' as const, newCard})
 const removeCardAC = (cardId: string) => ({type: 'REMOVE_CARD' as const, cardId})
 const changeCardAC = (changeCard: CardsType) => ({type: 'CHANGE_CARD' as const, changeCard})
 
-export const getCardTC = (id?: string) => async (dispatch: Dispatch) => {
+export const getCardTC = (id?: string) => async (dispatch: Dispatch, getState: () => AppRootStateType) => {
+    const state = getState()
     try {
         dispatch(setLoadingAC(true))
-        const response = await CardService.getCard(id)
-        dispatch(getCardAC(response.data.cards))
+        const response = await CardService.getNewCard(id, state.cardSearchReducer)
+        dispatch(getCardAC(response.data.cards, response.data.cardsTotalCount))
     } catch (e) {
         console.error('error:', e);
     } finally {
