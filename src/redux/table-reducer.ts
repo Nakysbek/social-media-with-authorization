@@ -20,10 +20,6 @@ export type CardPacks = {
 export type TableStateType = {
     cardPacks: CardPacks[],
     cardPacksTotalCount: number,
-    maxCardsCount: number,
-    minCardsCount: number,
-    page: number,
-    pageCount: number,
     loading: boolean
 }
 
@@ -39,10 +35,6 @@ const initialState : TableStateType = {
         },
     ],
     cardPacksTotalCount: 0, // количество колод
-    maxCardsCount: 0,
-    minCardsCount: 0,
-    page: 0, // выбранная страница
-    pageCount: 0, // количество элементов на странице
     loading: false
 }
 

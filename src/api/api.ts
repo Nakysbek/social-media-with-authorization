@@ -72,11 +72,7 @@ export class CardService {
     }
 }
 
-export class SearchPacksService {
-    static async getMyPacks(userId: string) {
-        return await $api.get(`cards/pack/?user_id=${userId}`)
-    }
-}
+
 
 
 

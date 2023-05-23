@@ -1,4 +1,3 @@
-import {CardPacks} from "./table-reducer";
 
 type ActionsType =
     | ReturnType<typeof setPageNumberAC>
@@ -8,31 +7,18 @@ type ActionsType =
     | ReturnType<typeof getTableBySearchAC>
 
 export type SearchParamsStateType = {
-    searchedCardPacks: CardPacks[]
     packName: string,
     min: number,
     max: number,
-    sortPacks?: string,
     page: number,
     pageCount: number,
     user_id: string,
 }
 
 const initialSearchState: SearchParamsStateType = {
-    searchedCardPacks: [
-        {
-            _id: "",
-            user_id: "",
-            name: "",
-            cardsCount: 0,
-            created: "",
-            updated: "",
-        },
-    ],
     packName: "",
     min: 0,
     max: 25,
-    sortPacks: '',
     page: 1,
     pageCount: 8,
     user_id: '',
@@ -40,6 +26,8 @@ const initialSearchState: SearchParamsStateType = {
 
 export const searchReducer = (state: SearchParamsStateType = initialSearchState, action: ActionsType): SearchParamsStateType => {
     switch (action.type) {
+        case 'GET_TABLE_BY_SEARCH':
+            return {...state, packName: action.packName}
         case 'SET_PAGE_NUMBER':
             return {...state, page: action.page};
         case 'SET_PAGE_COUNT_NUMBER':
@@ -48,15 +36,13 @@ export const searchReducer = (state: SearchParamsStateType = initialSearchState,
             return {...state, min: action.min, max: action.max}
         case 'SET_SHOW_PACKS':
             return {...state, user_id: action.userId}
-        case 'SET_MY_GET_TABLE':
-            return {...state, packName: action.packName}
         default:
             return state;
     }
 }
 
 export const getTableBySearchAC = (packName: string) => ({
-    type: 'SET_MY_GET_TABLE' as const, packName
+    type: 'GET_TABLE_BY_SEARCH' as const, packName
 })
 
 export const setPageNumberAC = (page: number) => ({

@@ -52,9 +52,9 @@ export const CardTableColumns = ({
                                     }
                                 }
                                 return (
-                                    <div key={index} className={s.rating}>
+                                    <td key={index} className={s.rating}>
                                         {starCount}
-                                    </div>
+                                    </td>
                                 )
                             }
                             return <td key={index}>

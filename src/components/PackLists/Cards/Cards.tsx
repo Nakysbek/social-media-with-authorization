@@ -18,6 +18,7 @@ import {MyButton} from "../../../UI/MyButton/MyButton";
 import {CardTableColumns} from "./CardTableColumns/CardTableColumns";
 import {Loader} from "../../Loader/Loader";
 import {TableStateType} from "../../../redux/table-reducer";
+import {getTableBySearchCardAC} from "../../../redux/cardSearch-reducer";
 
 export type cardColumnsType = {
     id: number,
@@ -43,8 +44,6 @@ export const Cards = () => {
     const [deleteCard, setDeleteCard] = useState<CardsType | null>(null)
     const [changeCard, setChangeCard] = useState<CardsType | null>(null)
     const [searchCard, setSearchCard] = useState<string>('')
-
-    const filteredCards = cards.filter((card: CardsType) => card.question.toLowerCase().includes(searchCard.toLowerCase()))
 
     const addNewCard = (question: string, answer: string) => {
         dispatch(addCardTC(question, answer, cardsPackId))
@@ -81,8 +80,8 @@ export const Cards = () => {
     }
 
     const handleInputCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
         setSearchCard(e.target.value);
+        dispatch(getTableBySearchCardAC(searchCard))
     }
 
     const cardColumns: cardColumnsType[] = [
@@ -176,7 +175,7 @@ export const Cards = () => {
                     <tbody>
                     {loading
                         ? <Loader/>
-                        : <CardTableColumns cards={filteredCards ? filteredCards : cards}
+                        : <CardTableColumns cards={cards}
                                             cardColumns={cardColumns}
                                             userId={userId}
                                             setDeleteCard={setDeleteCard}
